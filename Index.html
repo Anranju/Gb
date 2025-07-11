@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phishing Link Analyzer</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; }
+    input[type="text"] { width: 400px; padding: 8px; }
+    button { padding: 8px 16px; }
+    #result { margin-top: 20px; }
+    ul { color: red; }
+  </style>
+</head>
+<body>
+  <h2>🛡️ Website Link Safety Analyzer</h2>
+
+  <label for="weblink">Enter website URL to check:</label><br>
+  <input type="text" id="weblink" placeholder="https://example.com"><br><br>
+  <button onclick="analyzeLink()">Check Link</button>
+
+
+  <div id="result"></div>
+
+  <script>
+    function analyzeLink() {
+      const link = document.getElementById("weblink").value.trim();
+      const resultDiv = document.getElementById("result");
+      let warnings = [];
+
+      if (!link) {
+        resultDiv.innerHTML = "<span style='color:orange;'>Please enter a URL.</span>";
+        return;
+      }
+
+      // Check for HTTPS
+      if (!link.startsWith("https://")) {
+        warnings.push("⚠️ URL is not using HTTPS.");
+      }
+
+      // Check for suspicious domains
+      const suspiciousKeywords = ["login", "secure", "paypal", "bank", "verify", "update", "account"];
+      const knownPhishingTricks = ["-", "0", "1", "l", "I", "bit.ly", "tinyurl", "googIe.com"];
+
+      suspiciousKeywords.forEach(word => {
+        if (link.toLowerCase().includes(word)) {
+          warnings.push(`⚠️ Contains keyword: '${word}' (commonly used in phishing links)`);
+        }
+      });
+
+      knownPhishingTricks.forEach(trick => {
+        if (link.toLowerCase().includes(trick.toLowerCase())) {
+          warnings.push(`⚠️ Suspicious pattern detected: '${trick}'`);
+        }
+      });
+
+      // Output
+      resultDiv.innerHTML = warnings.length
+        ? "<b>Potential Risks Detected:</b><ul><li>" + warnings.join("</li><li>") + "</li></ul>"
+        : "<span style='color:green;'>✅ This link appears safe based on basic checks.</span>";
+    }
+  </script>
+</body>
+</html>
